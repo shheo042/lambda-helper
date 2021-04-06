@@ -1,0 +1,20 @@
+{
+  "name": "lambda-helper",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "js-yaml": "^4.0.0",
+    "json5": "^2.2.0",
+    "path": "^0.12.7",
+    "yargs": "^16.2.0"
+  },
+  "version": "1.0.1",
+  "description": "Helper to build serverelss.yml",
+  "main": "src/lib/lambaInputHelper.js",
+
+  "license": "MIT",
+
+  "author": {
+    "name": "Spark",
+    "email": "innocentchris@gmail.com"
+  }
+}
