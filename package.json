@@ -7,9 +7,9 @@
     "path": "^0.12.7",
     "yargs": "^16.2.0"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Helper to build serverelss.yml",
-  "main": "src/lib/lambaInputHelper.js",
+  "main": "src/lib/lambdaInputHelper.js",
 
   "license": "MIT",
 
