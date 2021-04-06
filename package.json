@@ -1,5 +1,5 @@
 {
-  "name": "lambda-helper",
+  "name": "lambda-code-helper",
   "dependencies": {
     "fs": "^0.0.1-security",
     "js-yaml": "^4.0.0",
