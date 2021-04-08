@@ -20,7 +20,7 @@ function handleTestInput(event, apiSpec) {
   }
   const method = apiSpec.method.toLowerCase();
   let inputObject;
-  if (method === "get" || method === "delete") {
+  if (method === "get" || method === "delete" || method == "websocket") {
     inputObject = (event.queryStringParameters) ? event.queryStringParameters : {};
   }
   else {
