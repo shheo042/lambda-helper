@@ -235,6 +235,19 @@ function iterate(apiSpec, inputObject, stack = "") {
             }
           }
         }
+        if (val.type === "Array") {
+
+          if (!Array.isArray(inputObject[property])) {
+
+            return { "result": "invalid_type_of_parameter", "reason": `invalid_type_of_parameter,expected array`, "stack": stack + '.' + property };
+
+          }
+          if (val.req) {
+            if (inputObject[property].length < 1) {
+              return { "result": "array_is_empty", "reason": `array_is_empty`, "stack": stack + '.' + property };
+            }
+          }
+        }
         if (val.type.toLowerCase() === "string") {
           const valueToInspect = inputObject[property]
           // if (valueToInspect.length < 1) {
