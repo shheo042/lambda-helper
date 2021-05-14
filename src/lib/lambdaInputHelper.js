@@ -242,7 +242,7 @@ function iterate(apiSpec, inputObject, stack = "") {
           if (isNaN(inputObject[property])) {
             return { "result": "invalid_type_of_parameter", "reason": "invalid_type_of_parameter,expected float", "stack": stack + '.' + property };
           }
-          if (!isFloat(inputObject[property])) {
+          if ((!isFloat(inputObject[property]) && !Number.isInteger(inputObject[property]))) {
             return { "result": "invalid_type_of_parameter", "reason": "invalid_type_of_parameter,expected float", "stack": stack + '.' + property };
           }
           if (inputObject[property].length > 0) {
