@@ -10,9 +10,10 @@ function handleTestInput(event, apiSpec) {
     process.env.testing = true;
     if (event.hasOwnProperty("requestContext")) {
       event["requestContext"]["identity"] = { sourceIp: "-" }
+      event["requestContext"]["http"] = { sourceIp: "-" }
     }
     else {
-      event["requestContext"] = { identity: { sourceIp: "-" } }
+      event["requestContext"] = { identity: { sourceIp: "-" }, http: { sourceIp: "-" } }
     }
     event.env.forEach((item, index) => {
       process.env[item.key] = item.value;
