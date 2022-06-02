@@ -207,6 +207,9 @@ function checkInput(inputObject, apiSpec) {
   }
   return ({ "passed": true });
 }
+function isFloat(n) {
+  return Number(n) === n && n % 1 !== 0;
+}
 function iterate(apiSpec, inputObject, stack = "") {
 
   for (var property in apiSpec) {
@@ -233,6 +236,40 @@ function iterate(apiSpec, inputObject, stack = "") {
               if (val.max < valueToInspect) {
                 return { "result": "parameter_value_too_big", "reason": `parameter greater than max, expected less than ${val.max}`, "stack": stack + '.' + property };
               }
+            }
+          }
+        }
+        if (val.type === "Float") {
+          if (isNaN(inputObject[property])) {
+            return { "result": "invalid_type_of_parameter", "reason": "invalid_type_of_parameter,expected float", "stack": stack + '.' + property };
+          }
+          if ((!isFloat(inputObject[property]) && !Number.isInteger(inputObject[property]))) {
+            return { "result": "invalid_type_of_parameter", "reason": "invalid_type_of_parameter,expected float", "stack": stack + '.' + property };
+          }
+          if (inputObject[property].length > 0) {
+            const valueToInspect = parseInt(inputObject[property]);
+            if (val.min) {
+              if (val.min > valueToInspect) {
+                return { "result": "parameter_value_too_small", "reason": `parameter less than min, expected greater than ${val.min}`, "stack": stack + '.' + property };
+              }
+            }
+            if (val.max) {
+              if (val.max < valueToInspect) {
+                return { "result": "parameter_value_too_big", "reason": `parameter greater than max, expected less than ${val.max}`, "stack": stack + '.' + property };
+              }
+            }
+          }
+        }
+        if (val.type === "Array") {
+
+          if (!Array.isArray(inputObject[property])) {
+
+            return { "result": "invalid_type_of_parameter", "reason": `invalid_type_of_parameter,expected array`, "stack": stack + '.' + property };
+
+          }
+          if (val.req) {
+            if (inputObject[property].length < 1) {
+              return { "result": "array_is_empty", "reason": `array_is_empty`, "stack": stack + '.' + property };
             }
           }
         }
