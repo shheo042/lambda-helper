@@ -81,9 +81,39 @@ function createRedirectionResponse(url, body, newToken) {
   };
   return response;
 }
+function createRedirectionResponseV2(url, body, newToken) {
+  var response = {
+    isBase64Encoded: false,
+    statusCode: 302,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Expose-Headers": "*",
+      "Refreshed-Token": (newToken) ? newToken : "none",
+      "Access-Control-Allow-Origin": "*",
+      Location: url
+    },
+    body: JSON.stringify(body)
+  };
+  return response;
+}
 function createOKResponse(body, newToken) {
   let response = {
     isBase64Encoded: true,
+    statusCode: 200,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Expose-Headers": "*",
+      "Refreshed-Token": (newToken) ? newToken : "none",
+      "Access-Control-Allow-Origin": "*",
+      "api-version": process.env.version,
+    },
+    body: JSON.stringify(body)
+  };
+  return response;
+}
+function createOKResponseV2(body, newToken) {
+  let response = {
+    isBase64Encoded: false,
     statusCode: 200,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
@@ -121,9 +151,48 @@ function createPredefinedErrorResponse(errors, errorType, comment) {
   //console.log(response);
   return response;
 }
+function createPredefinedErrorResponseV2(errors, errorType, comment) {
+
+  // if (comment) {
+  //   console.log(comment);
+  // }
+  const obj = errors[errorType];
+  const reason = obj.reason;
+  const statusCode = obj.status_code;
+  let body = { "result": errorType };
+  if (reason && process.env.stage === "dev") {
+    body["reason"] = reason;
+  }
+  let response = {
+    isBase64Encoded: false,
+    statusCode: statusCode,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+      "api-version": process.env.version,
+    },
+    body: JSON.stringify(body)
+  };
+  //console.log(response);
+  return response;
+}
 function createErrorResponse(httpCode, body, reason = undefined) {
   let response = {
     isBase64Encoded: true,
+    statusCode: httpCode,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+      "api-version": process.env.version,
+    },
+    body: JSON.stringify(body)
+  };
+  //console.log(response);
+  return response;
+}
+function createErrorResponseV2(httpCode, body, reason = undefined) {
+  let response = {
+    isBase64Encoded: false,
     statusCode: httpCode,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
@@ -181,6 +250,27 @@ async function createInternalErrorResponse(event, error, httpCode, body, reason 
   }
   let response = {
     isBase64Encoded: true,
+    statusCode: httpCode,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+      "api-version": process.env.version,
+    },
+    body: JSON.stringify(body)
+  };
+  return response;
+}
+async function createInternalErrorResponseV2(event, error, httpCode, body, reason = undefined) {
+
+  if (reason && process.env.stage === "dev") {
+    body["result"] = reason;
+  }
+  if (error) {
+    await sendError(error, event);
+
+  }
+  let response = {
+    isBase64Encoded: false,
     statusCode: httpCode,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
@@ -333,3 +423,8 @@ module.exports.replaceAll = replaceAll;
 module.exports.createInternalErrorResponse = createInternalErrorResponse;
 module.exports.sendError = sendError;
 module.exports.createPredefinedErrorResponse = createPredefinedErrorResponse;
+
+
+module.exports.createRedirectionResponseV2 = createRedirectionResponseV2;
+module.exports.createOKResponseV2 = createOKResponseV2;
+module.exports.createErrorResponseV2 = createErrorResponseV2;
