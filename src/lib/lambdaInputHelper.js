@@ -428,3 +428,7 @@ module.exports.createPredefinedErrorResponse = createPredefinedErrorResponse;
 module.exports.createRedirectionResponseV2 = createRedirectionResponseV2;
 module.exports.createOKResponseV2 = createOKResponseV2;
 module.exports.createErrorResponseV2 = createErrorResponseV2;
+module.exports.createInternalErrorResponseV2 = createInternalErrorResponseV2;
+module.exports.createPredefinedErrorResponseV2 = createPredefinedErrorResponseV2;
+
+
