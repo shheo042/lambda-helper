@@ -2,17 +2,16 @@
   "name": "lambda-code-helper",
   "dependencies": {
     "fs": "^0.0.1-security",
+    "js-base64": "^3.7.2",
     "js-yaml": "^4.0.0",
     "json5": "^2.2.0",
     "path": "^0.12.7",
     "yargs": "^16.2.0"
   },
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Helper to build serverelss.yml",
   "main": "src/lib/lambdaInputHelper.js",
-
   "license": "MIT",
-
   "author": {
     "name": "Spark",
     "email": "innocentchris@gmail.com"

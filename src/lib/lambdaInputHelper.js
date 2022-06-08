@@ -1,4 +1,5 @@
 var AWS = require("aws-sdk");
+var Base64 = require('js-base64').Base64;
 function handleTestInput(event, apiSpec) {
   if (event.testing) {
     var credentials = new AWS.SharedIniFileCredentials({ profile: event.testProfile });
@@ -25,8 +26,16 @@ function handleTestInput(event, apiSpec) {
     inputObject = (event.queryStringParameters) ? event.queryStringParameters : {};
   }
   else {
-    inputObject = (event.body) ? JSON.parse(event.body) : {};
+    if (event.isBase64Encoded) {
+      inputObject = (event.body) ? JSON.parse(Base64.decode(event.body)) : {};
+
+    }
+    else {
+
+      inputObject = (event.body) ? JSON.parse(event.body) : {};
+    }
   }
+
   let inputCheckObject = checkInput(inputObject, apiSpec)
 
   inputObject = setDefaultValue(inputObject, apiSpec)
