@@ -15,5 +15,9 @@
   "author": {
     "name": "Spark",
     "email": "innocentchris@gmail.com"
+  },
+  "types": "src/lib/main.d.ts",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.101"
   }
 }
