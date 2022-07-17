@@ -1,6 +1,6 @@
-import type { PreSignUpTriggerEvent } from 'aws-lambda';
+import type { PostConfirmationTriggerEvent, PreSignUpTriggerEvent } from 'aws-lambda';
+import { BaseTriggerEvent } from 'aws-lambda/trigger/cognito-user-pool-trigger/_common';
 import { ApiSpec } from './baseApiSpec';
-import type { RequireOnlyOne } from './common';
 
 export type CognitoApiSpec = ApiSpec & {
   type: 'cognito';
@@ -9,7 +9,7 @@ export type CognitoApiSpec = ApiSpec & {
   trigger: string;
 };
 
-export type CognitoPreSignUpApiSpec = CognitoApiSpec & {
-  parameters: PreSignUpTriggerEvent['request'];
-  responses: PreSignUpTriggerEvent['response'];
+export type CognitoTriggerApiSpec<T extends BaseTriggerEvent<K>, K extends string> = CognitoApiSpec & {
+  parameters: T['request'];
+  responses: T['response'];
 };

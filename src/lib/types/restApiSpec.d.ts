@@ -1,29 +1,29 @@
 import { StringMap } from './common';
 import { ApiSpec } from './baseApiSpec';
 
-export type ApiSpecParameterElement = {
+export type RestApiSpecParameterElement = {
   req: boolean;
   type: 'String' | 'Integer';
   desc: string;
 };
 
-export type ApiSpecParameters = {
-  [key: string]: ApiSpecParameterElement;
+export type RestApiSpecParameters = {
+  [key: string]: RestApiSpecParameterElement;
 };
 
-export type ApiSpecResponseData = {
+export type RestApiSpecResponseData = {
   type: 'JSON';
   desc: string;
   sub: StringMap;
 };
 
-export type ApiSpecResponses = {
-  data?: ApiSpecResponseData;
+export type RestApiSpecResponses = {
+  data?: RestApiSpecResponseData;
 };
 
 export type RestApiSpec = ApiSpec & {
   type: 'REST';
   method: 'Get' | 'Post' | 'Put' | 'Delete';
-  parameters: ApiSpecParameters;
-  responses: ApiSpecResponses;
+  parameters: RestApiSpecParameters;
+  responses: RestApiSpecResponses;
 };
