@@ -1,5 +1,5 @@
-import { StringMap } from "./common";
-import { ApiSpec } from "./baseApiSpec";
+import { StringMap } from './common';
+import { ApiSpec } from './baseApiSpec';
 
 export type ApiSpecParameterElement = {
   req: boolean;
@@ -21,8 +21,9 @@ export type ApiSpecResponses = {
   data?: ApiSpecResponseData;
 };
 
-export type RestApiSpec = ApiSpec<"REST"> & {
+export type RestApiSpec = ApiSpec & {
+  type: 'REST';
   method: 'Get' | 'Post' | 'Put' | 'Delete';
   parameters: ApiSpecParameters;
   responses: ApiSpecResponses;
-}
+};
