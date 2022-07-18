@@ -3,7 +3,7 @@ import { ApiSpec } from './baseApiSpec';
 
 export type RestApiSpecParameterElement = {
   req: boolean;
-  type: 'String' | 'Integer';
+  type: 'String' | 'Integer' | 'Float' | 'Array' | 'password';
   desc: string;
 };
 
@@ -14,6 +14,7 @@ export type RestApiSpecParameters = {
 export type RestApiSpecResponseData = {
   type: 'JSON';
   desc: string;
+  searchable?: boolean;
   sub: StringMap;
 };
 
@@ -24,6 +25,8 @@ export type RestApiSpecResponses = {
 export type RestApiSpec = ApiSpec & {
   type: 'REST';
   method: 'Get' | 'Post' | 'Put' | 'Delete';
+  authorizer: string,
   parameters: RestApiSpecParameters;
   responses: RestApiSpecResponses;
+  errors: any; // TODO: 작성필요
 };
