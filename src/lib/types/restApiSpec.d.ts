@@ -25,8 +25,8 @@ export type RestApiSpecResponses = {
 export type RestApiSpec = ApiSpec & {
   type: 'REST';
   method: 'Get' | 'Post' | 'Put' | 'Delete';
-  authorizer: string,
   parameters: RestApiSpecParameters;
   responses: RestApiSpecResponses;
-  errors: any; // TODO: 작성필요
+  authorizer?: string,
+  errors?: any; // TODO: 작성필요
 };
