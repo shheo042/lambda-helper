@@ -15,7 +15,7 @@ export type RestApiSpecResponseData = {
   type: 'JSON';
   desc: string;
   searchable?: boolean;
-  sub: StringMap;
+  sub?: any; // TODO: 구조 파악 후 적당히 작성?
 };
 
 export type RestApiSpecResponses = {
