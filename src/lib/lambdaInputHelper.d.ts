@@ -38,3 +38,5 @@ declare function createInternalErrorResponse(
 declare function createOKResponse(body: LambdaResponseBody, newToken?: string): APIGatewayProxyResult;
 
 declare function createOKResponseV2(body: LambdaResponseBody, newToken?: string): APIGatewayProxyResult;
+
+declare function appendHeaderToResponse(response: APIGatewayProxyResult, headerKey: string, headerValue: string): APIGatewayProxyResult;

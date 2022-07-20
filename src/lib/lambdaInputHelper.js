@@ -75,6 +75,13 @@ function createColumnSpec(apiSpec) {
   }
   return columnsMap;
 }
+
+function appendHeaderToResponse(response, headerKey, headerValue) {
+  response.headers = response.headers || {};
+  response.headers[headerKey] = headerValue;
+  return response;
+}
+
 function createRedirectionResponse(url, body, newToken) {
   var response = {
     isBase64Encoded: true,
@@ -419,7 +426,7 @@ function iterate(apiSpec, inputObject, stack = "") {
 
 
 
-
+module.exports.appendHeaderToResponse = appendHeaderToResponse;
 module.exports.createRedirectionResponse = createRedirectionResponse;
 module.exports.createOKResponse = createOKResponse;
 module.exports.handleTestInput = handleTestInput;
