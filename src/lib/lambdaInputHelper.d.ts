@@ -40,3 +40,5 @@ declare function createOKResponse(body: LambdaResponseBody, newToken?: string): 
 declare function createOKResponseV2(body: LambdaResponseBody, newToken?: string): APIGatewayProxyResult;
 
 declare function appendHeaderToResponse(response: APIGatewayProxyResult, headerKey: string, headerValue: string): APIGatewayProxyResult;
+
+declare function createRedirectionResponseV2(url: string, body: LambdaResponseBody, newToken?: string): APIGatewayProxyResult;
