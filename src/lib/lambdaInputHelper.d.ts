@@ -29,6 +29,12 @@ declare function createErrorResponse(
   reason?: string
 ): APIGatewayProxyResult;
 
+declare function createErrorResponseV2(
+  httpStatusCode: number,
+  body: LambdaResponseBody,
+  reason?: string
+): APIGatewayProxyResult;
+
 declare function createInternalErrorResponse(
   httpStatusCode: number,
   body: LambdaResponseBody,
