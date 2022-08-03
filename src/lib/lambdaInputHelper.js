@@ -1,8 +1,6 @@
 var AWS = require("aws-sdk");
 var Base64 = require('js-base64').Base64;
 
-// @filename: types/lambdaInputHelperTypes.d.ts
-
 /**
  * @param {APIGatewayEvent} event - Handler로 전달받은 APIGatewayEvent
  * @param {RestApiSpec} apiSpec - apiSpec
