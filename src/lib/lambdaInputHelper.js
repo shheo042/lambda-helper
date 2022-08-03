@@ -1,5 +1,11 @@
 var AWS = require("aws-sdk");
 var Base64 = require('js-base64').Base64;
+
+/**
+ * @param {APIGatewayEvent} event - Handler로 전달받은 APIGatewayEvent
+ * @param {RestApiSpec} apiSpec - apiSpec
+ * @return {HandleTestInputResult} { inputObject, checkInputObject }
+ */
 function handleTestInput(event, apiSpec) {
   if (event.testing) {
     var credentials = new AWS.SharedIniFileCredentials({ profile: event.testProfile });
@@ -75,6 +81,19 @@ function createColumnSpec(apiSpec) {
   }
   return columnsMap;
 }
+
+/**
+ * @param {APIGatewayProxyResult} response - APIGatewayProxyResult
+ * @param {string} headerKey - 헤더 Key
+ * @param {string} headerValue - 헤더 Value
+ * @return {APIGatewayProxyResult} 헤더가 추가된 response
+ */
+function appendHeaderToResponse(response, headerKey, headerValue) {
+  response.headers = response.headers || {};
+  response.headers[headerKey] = headerValue;
+  return response;
+}
+
 function createRedirectionResponse(url, body, newToken) {
   var response = {
     isBase64Encoded: true,
@@ -90,6 +109,13 @@ function createRedirectionResponse(url, body, newToken) {
   };
   return response;
 }
+
+/**
+ * @param {string} url - Redirect 할 URL
+ * @param {LambdaResponseBody} body - Response 생성 시 포함할 body
+ * @param {string=} newToken - refresh token
+ * @return {APIGatewayProxyResult} 생성된 Redirection Response
+ */
 function createRedirectionResponseV2(url, body, newToken) {
   var response = {
     isBase64Encoded: false,
@@ -105,6 +131,12 @@ function createRedirectionResponseV2(url, body, newToken) {
   };
   return response;
 }
+
+/**
+ * @param {LambdaResponseBody} body - Response 생성 시 포함할 body
+ * @param {string=} newToken - refresh token
+ * @return {APIGatewayProxyResult} 생성된 OK Response
+ */
 function createOKResponse(body, newToken) {
   let response = {
     isBase64Encoded: true,
@@ -120,6 +152,12 @@ function createOKResponse(body, newToken) {
   };
   return response;
 }
+
+/**
+ * @param {LambdaResponseBody} body - Response 생성 시 포함할 body
+ * @param {string=} newToken - refresh token
+ * @return {APIGatewayProxyResult} 생성된 OK Response
+ */
 function createOKResponseV2(body, newToken) {
   let response = {
     isBase64Encoded: false,
@@ -185,6 +223,13 @@ function createPredefinedErrorResponseV2(errors, errorType, comment) {
   //console.log(response);
   return response;
 }
+
+/**
+ * @param {number} httpCode - Response의 status code
+ * @param {LambdaResponseBody} body - Response 생성 시 포함할 body
+ * @param {string=} reason - 현재 사용되지 않음
+ * @return {APIGatewayProxyResult} 생성된 Error Response
+ */
 function createErrorResponse(httpCode, body, reason = undefined) {
   let response = {
     isBase64Encoded: true,
@@ -199,6 +244,13 @@ function createErrorResponse(httpCode, body, reason = undefined) {
   //console.log(response);
   return response;
 }
+
+/**
+ * @param {number} httpCode - Response의 status code
+ * @param {LambdaResponseBody} body - Response 생성 시 포함할 body
+ * @param {string=} reason - 현재 사용되지 않음
+ * @return {APIGatewayProxyResult} 생성된 Error Response
+ */
 function createErrorResponseV2(httpCode, body, reason = undefined) {
   let response = {
     isBase64Encoded: false,
@@ -419,7 +471,7 @@ function iterate(apiSpec, inputObject, stack = "") {
 
 
 
-
+module.exports.appendHeaderToResponse = appendHeaderToResponse;
 module.exports.createRedirectionResponse = createRedirectionResponse;
 module.exports.createOKResponse = createOKResponse;
 module.exports.handleTestInput = handleTestInput;
