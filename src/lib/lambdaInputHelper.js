@@ -485,11 +485,11 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
   }
 
   // test stage의 경우 echoing 기능 추가
-  if (process.env.stage === 'test') {
+  if (process.env.allow_mock && process.env.stage != "prod") {
     if (inputObject.mock) {
       return createOKResponseV2({
         result: 'success',
-        data: inputObject.mock,
+        data: (typeof inputObject.mock === 'string') ? JSON.parse(inputObject.mock) : inputObject.mock,
       });
     }
   }
