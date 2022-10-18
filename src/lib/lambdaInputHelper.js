@@ -467,6 +467,7 @@ function iterate(apiSpec, inputObject, stack = "") {
   return true;
 }
 /**
+ *  @author: 허세현(marshall@reconlabs.ai)
   * @param {object} event Lambda HttpApi event
   * @param {object} context Lambda context
   * @param {object} apiSpec API specification
