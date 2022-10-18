@@ -488,7 +488,7 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
   if (process.env.allow_mock && process.env.stage != "prod") {
     if (inputObject.mock) {
       return createOKResponseV2({
-        result: 'success',
+        result: (typeof inputObject.mockResult === 'string') ? JSON.parse(inputObject.mockResult) : inputObject.mockResult,
         data: (typeof inputObject.mock === 'string') ? JSON.parse(inputObject.mock) : inputObject.mock,
       });
     }
