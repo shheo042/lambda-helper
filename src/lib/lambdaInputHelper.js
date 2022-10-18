@@ -26,7 +26,7 @@ function handleTestInput(event, apiSpec) {
       process.env[item.key] = item.value;
     });
   }
-  const method =(apiSpec.method)? apiSpec.method.toLowerCase():apiSpec.event[0].method.toLowerCase();
+  const method = (apiSpec.method) ? apiSpec.method.toLowerCase() : apiSpec.event[0].method.toLowerCase();
   let inputObject;
   if (method === "get" || method === "delete" || method == "websocket") {
     inputObject = (event.queryStringParameters) ? event.queryStringParameters : {};
@@ -466,11 +466,55 @@ function iterate(apiSpec, inputObject, stack = "") {
   }
   return true;
 }
+/**
+  * @param {object} event Lambda HttpApi event
+  * @param {object} context Lambda context
+  * @param {object} apiSpec API specification
+  * @param {object} handler Business logic
+  * @param {object} Logger Logger class, 추후 Logger가 공용 모듈로 분리되면 dependancy로 두고 직접 require하도록 수정 예정
+  */
+async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
+  // input 체크
+  let { inputObject, inputCheckObject } = handleTestInput(event, apiSpec);
+  if (!inputCheckObject.passed) {
+    console.log('Parameter not found');
+    return createErrorResponseV2(422, {
+      result: inputCheckObject.reason,
+      parameter: inputCheckObject.stack,
+    });
+  }
+
+  // test stage의 경우 echoing 기능 추가
+  if (process.env.stage === 'test') {
+    if (inputObject.mock) {
+      return createOKResponseV2({
+        result: 'success',
+        data: inputObject.mock,
+      });
+    }
+  }
+
+  try {
+    const result = await handler(inputObject);
+    if (result.status === 200) {
+      return createOKResponseV2(result.response);
+    } else if (apiSpec.errors?.keys.includes(result.predefinedError)) {
+      return createPredefinedErrorResponseV2(apiSpec.errors, result.predefinedError);
+    } else {
+      return createErrorResponseV2(result.status, result.response);
+    }
+  } catch (error) {
+    // handler 내에서 처리되지 않은 오류 발생 시 500, Internal Server Error 반환
+    Logger.Error("Uncaught exeception in handler", event.httpMethod, event.requestContext?.path, inputObject, error);
+    return createErrorResponseV2(500, {
+      result: "Internal Server Error",
+    });
+  }
+};
 
 
 
-
-
+module.exports.handleHttpRequest = handleHttpRequest;
 module.exports.appendHeaderToResponse = appendHeaderToResponse;
 module.exports.createRedirectionResponse = createRedirectionResponse;
 module.exports.createOKResponse = createOKResponse;
