@@ -486,7 +486,7 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
   }
 
   // test stage의 경우 echoing 기능 추가
-  if (process.env.allow_mock==true && process.env.stage != "prod") {
+  if (process.env.allow_mock === "true" && process.env.stage != "prod") {
     if (inputObject.mock) {
       return createOKResponseV2({
         result: (typeof inputObject.mockResult === 'string') ? JSON.parse(inputObject.mockResult) : inputObject.mockResult,
