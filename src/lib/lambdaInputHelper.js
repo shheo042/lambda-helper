@@ -499,7 +499,7 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
     const result = await handler(inputObject,event);
     if (result.status === 200) {
       return createOKResponseV2(result.response);
-    } else if (apiSpec.errors?.keys.includes(result.predefinedError)) {
+    } else if (Object.keys(apiSpec.errors || {})(result.predefinedError)) {
       return createPredefinedErrorResponseV2(apiSpec.errors, result.predefinedError);
     } else {
       return createErrorResponseV2(result.status, result.response);
