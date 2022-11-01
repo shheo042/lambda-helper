@@ -346,6 +346,10 @@ function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
+function isObject(o) {
+  return (!!o) && (o.constructor === Object);
+}
+
 function checkInput(inputObject, apiSpec) {
 
   if (!inputObject && Object.keys(apiSpec.parameters).length) {
@@ -499,10 +503,21 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
     const result = await handler(inputObject,event);
     if (result.status === 200) {
       return createOKResponseV2(result.response);
-    } else if (Object.keys(apiSpec.errors || {}).includes(result.predefinedError)) {
-      return createPredefinedErrorResponseV2(apiSpec.errors, result.predefinedError);
     } else {
-      return createErrorResponseV2(result.status, result.response);
+      const predefinedErrorName = isObject(result.predefinedError) ? Object.keys(result.predefinedError)[0] : result.predefinedError;    
+      if (predefinedErrorName) {
+        if (Object.keys(apiSpec.errors || {}).includes(predefinedErrorName)) {
+          return createPredefinedErrorResponseV2(apiSpec.errors, predefinedErrorName);
+        } else {
+          // 주어진 predefinedError가 apiSpec에 정의되어 있지 않은 경우
+          return createErrorResponseV2(500, {
+            result: "invalid_predefined_error",
+            predefinedError: predefinedErrorName,
+          });
+        }
+      } else {
+        return createErrorResponseV2(result.status, result.response);
+      }
     }
   } catch (error) {
     // handler 내에서 처리되지 않은 오류 발생 시 500, Internal Server Error 반환
