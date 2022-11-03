@@ -502,7 +502,7 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
   //predefined error 추가
   let keys = Object.keys(apiSpec.errors)
   keys.map(key=>{
-    apiSpec.errors[key].name = key
+    apiSpec.errors[key].result = key
   })
 
   try {
@@ -510,7 +510,7 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
     if (result.status === 200) {
       return createOKResponseV2(result.response);
     } else {
-      const predefinedErrorName = isObject(result.predefinedError) ? result.predefinedError.name : result.predefinedError;    
+      const predefinedErrorName = isObject(result.predefinedError) ? result.predefinedError.result : result.predefinedError;    
       if (predefinedErrorName) {
         if (Object.keys(apiSpec.errors || {}).includes(predefinedErrorName)) {
           return createPredefinedErrorResponseV2(apiSpec.errors, predefinedErrorName);
