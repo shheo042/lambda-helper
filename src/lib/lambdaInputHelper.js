@@ -479,10 +479,12 @@ function iterate(apiSpec, inputObject, stack = "") {
   * @param {object} Logger Logger class, 추후 Logger가 공용 모듈로 분리되면 dependancy로 두고 직접 require하도록 수정 예정
   */
 async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
+  Logger?.init(context);
   // input 체크
   let { inputObject, inputCheckObject } = handleTestInput(event, apiSpec);
   if (!inputCheckObject.passed) {
     console.log('Parameter not found');
+    await Logger?.finalize();
     return createErrorResponseV2(422, {
       result: inputCheckObject.reason,
       parameter: inputCheckObject.stack,
@@ -492,6 +494,7 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
   // test stage의 경우 echoing 기능 추가
   if (process.env.allow_mock === "true" && process.env.stage != "prod") {
     if (inputObject.mock) {
+      await Logger?.finalize();
       return createOKResponseV2({
         result: (typeof inputObject.mockResult === 'string') ? JSON.parse(inputObject.mockResult) : inputObject.mockResult,
         data: (typeof inputObject.mock === 'string') ? JSON.parse(inputObject.mock) : inputObject.mock,
@@ -505,37 +508,55 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
     apiSpec.errors[key].result = key
   })
 
+  let response;
   try {
-    const result = await handler(inputObject,event);
+    const result = await handler(inputObject, event);
     if (result.status === 200) {
-      return createOKResponseV2(result.response);
+      response = createOKResponseV2(result.response);
     } else {
       const predefinedErrorName = isObject(result.predefinedError) ? result.predefinedError.result : result.predefinedError;    
       if (predefinedErrorName) {
         if (Object.keys(apiSpec.errors || {}).includes(predefinedErrorName)) {
-          return createPredefinedErrorResponseV2(apiSpec.errors, predefinedErrorName);
+          response = createPredefinedErrorResponseV2(apiSpec.errors, predefinedErrorName);
         } else {
           // 주어진 predefinedError가 apiSpec에 정의되어 있지 않은 경우
-          return createErrorResponseV2(500, {
+          Logger?.Error("invalid_predefined_error", event.routeKey, event.requestContext?.apiId, inputObject, predefinedErrorName);
+          response = createErrorResponseV2(500, {
             result: "invalid_predefined_error",
             predefinedError: predefinedErrorName,
           });
         }
       } else {
-        return createErrorResponseV2(result.status, result.response);
+        response = createErrorResponseV2(result.status, result.response);
       }
     }
   } catch (error) {
     // handler 내에서 처리되지 않은 오류 발생 시 500, Internal Server Error 반환
-    Logger.Error("Uncaught exeception in handler", event.httpMethod, event.requestContext?.path, inputObject, error);
-    return createErrorResponseV2(500, {
+    Logger?.Error("Uncaught exeception in handler", event.routeKey, event.requestContext?.apiId, inputObject, error);
+    response = createErrorResponseV2(500, {
       result: "Internal Server Error",
     });
   }
+  await Logger?.finalize();
+  return response;
 };
 
 
+async function handleLambdaEvent(event, context, apiSpec, handler, Logger) {
+  Logger?.init(context);
+  try {
+    const result = await handler(event, context);
+    await Logger?.finalize();
+    return result;
+  } catch (error) {
+    await Logger?.finalize();   
+    throw error; 
+  }
+}
 
+
+
+module.exports.handleLambdaEvent = handleLambdaEvent;
 module.exports.handleHttpRequest = handleHttpRequest;
 module.exports.appendHeaderToResponse = appendHeaderToResponse;
 module.exports.createRedirectionResponse = createRedirectionResponse;
