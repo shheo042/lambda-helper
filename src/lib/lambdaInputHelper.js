@@ -479,12 +479,12 @@ function iterate(apiSpec, inputObject, stack = "") {
   * @param {object} Logger Logger class, 추후 Logger가 공용 모듈로 분리되면 dependancy로 두고 직접 require하도록 수정 예정
   */
 async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
-  Logger?.init(context);
+  Logger?.init?.(context);
   // input 체크
   let { inputObject, inputCheckObject } = handleTestInput(event, apiSpec);
   if (!inputCheckObject.passed) {
     console.log('Parameter not found');
-    await Logger?.finalize();
+    await Logger?.finalize?.();
     return createErrorResponseV2(422, {
       result: inputCheckObject.reason,
       parameter: inputCheckObject.stack,
@@ -494,7 +494,7 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
   // test stage의 경우 echoing 기능 추가
   if (process.env.allow_mock === "true" && process.env.stage != "prod") {
     if (inputObject.mock) {
-      await Logger?.finalize();
+      await Logger?.finalize?.();
       return createOKResponseV2({
         result: (typeof inputObject.mockResult === 'string') ? JSON.parse(inputObject.mockResult) : inputObject.mockResult,
         data: (typeof inputObject.mock === 'string') ? JSON.parse(inputObject.mock) : inputObject.mock,
@@ -537,19 +537,19 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
       result: "Internal Server Error",
     });
   }
-  await Logger?.finalize();
+  await Logger?.finalize?.();
   return response;
 };
 
 
 async function handleLambdaEvent(event, context, apiSpec, handler, Logger) {
-  Logger?.init(context);
+  Logger?.init?.(context);
   try {
     const result = await handler(event, context);
-    await Logger?.finalize();
+    await Logger?.finalize?.();
     return result;
   } catch (error) {
-    await Logger?.finalize();   
+    await Logger?.finalize?.();   
     throw error; 
   }
 }
