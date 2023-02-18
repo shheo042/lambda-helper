@@ -483,7 +483,7 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
   // input 체크
   let { inputObject, inputCheckObject } = handleTestInput(event, apiSpec);
   if (!inputCheckObject.passed) {
-    console.log('Parameter not found');
+    console.log('Parameter not found:', inputCheckObject.result);
     await Logger?.finalize?.();
     return createErrorResponseV2(422, {
       result: inputCheckObject.reason,
@@ -504,7 +504,7 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
 
   //predefined error 추가
   let keys = Object.keys(apiSpec.errors)
-  keys.map(key=>{
+  keys.map(key => {
     apiSpec.errors[key].result = key
   })
 
@@ -514,7 +514,7 @@ async function handleHttpRequest(event, context, apiSpec, handler, Logger) {
     if (result.status === 200) {
       response = createOKResponseV2(result.response);
     } else {
-      const predefinedErrorName = isObject(result.predefinedError) ? result.predefinedError.result : result.predefinedError;    
+      const predefinedErrorName = isObject(result.predefinedError) ? result.predefinedError.result : result.predefinedError;
       if (predefinedErrorName) {
         if (Object.keys(apiSpec.errors || {}).includes(predefinedErrorName)) {
           response = createPredefinedErrorResponseV2(apiSpec.errors, predefinedErrorName);
@@ -549,8 +549,8 @@ async function handleLambdaEvent(event, context, apiSpec, handler, Logger) {
     await Logger?.finalize?.();
     return result;
   } catch (error) {
-    await Logger?.finalize?.();   
-    throw error; 
+    await Logger?.finalize?.();
+    throw error;
   }
 }
 
